@@ -8,8 +8,9 @@ deploy:
   env:
     NETWORK: "ithaca-odyssey"
     BLOCK_RANGE_FROM: 500000
-    RPC_URL: "https://odyssey.ithaca.xyz"
+    RPC_URL: ${{ secrets.ODYSSEY_RPC_URL }}
     CHAIN_ID: 911867
+    RPC_RATE_LIMIT: 80
   processor:
     cmd:
       - sqd
