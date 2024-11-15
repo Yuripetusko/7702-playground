@@ -1,0 +1,22 @@
+{
+  "name": "7702-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "ox": "^0.1.7",
+    "viem": "^2.21.44",
+    "wagmi": "^2.12.30"
+  },
+  "workspaces": ["packages/*"]
+}

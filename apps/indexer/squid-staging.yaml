@@ -1,0 +1,30 @@
+manifestVersion: subsquid.io/v0.1
+name: indexer-7702-manager
+tag: staging
+description: 'An EIP-7702 indexer'
+build:
+deploy:
+  addons:
+    postgres:
+  env:
+    NETWORK: "ithaca-odyssey"
+    BLOCK_RANGE_FROM: 2790000
+    RPC_URL: "https://odyssey.ithaca.xyz"
+    CHAIN_ID: 911867
+  processor:
+    cmd:
+      - sqd
+      - process:prod
+  api:
+    cmd:
+      - sqd
+      - serve:prod
+  init:
+    cmd:
+      - sqd
+      - migration:apply
+
+scale:
+  addons:
+    rpc:
+      max-rate: 20rps

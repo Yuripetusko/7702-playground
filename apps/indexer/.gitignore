@@ -1,0 +1,27 @@
+### Node template
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# TypeScript cache
+*.tsbuildinfo
+
+/node_modules
+/lib
+
+/**Versions.json
+
+# dotenv environment variables file
+.env*
+!.env.dev
+.env.test
+
+# IDE files
+/.idea
+
+#src/model/generated
+/builds
+dist
+data
+out

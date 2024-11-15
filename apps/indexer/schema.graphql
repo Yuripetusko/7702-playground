@@ -1,0 +1,44 @@
+type Account @entity {
+    id: ID!
+    designator: Designator
+    events: [Event]! @derivedFrom(field: "account")
+}
+
+type Designator @entity {
+    id: ID!
+    address: String!
+    accounts: [Account] @derivedFrom(field: "designator")
+    events: [Event]! @derivedFrom(field: "designator")
+}
+
+type Block @entity {
+    id: ID!
+    number: Int! @index
+    timestamp: DateTime!
+    events: [Event]! @derivedFrom(field: "block")
+}
+
+type Event @entity {
+    id: ID!
+    block: Block!
+    transactionHash: String!
+    eventType: EventType @index
+    payload: EventPayloads!
+    from: String
+    designator: Designator
+    account: Account
+}
+
+enum EventType {
+    SetCodeTxType
+}
+
+union EventPayloads =
+    SetCodeTxTypePayload
+
+
+type SetCodeTxTypePayload {
+    from: String!
+    designatorAddress: String
+}
+
