@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
 import {Designator} from "./designator.model"
 import {Event} from "./event.model"
 
@@ -17,4 +17,7 @@ export class Account {
 
     @OneToMany_(() => Event, e => e.account)
     events!: Event[]
+
+    @StringColumn_({nullable: false})
+    address!: string
 }

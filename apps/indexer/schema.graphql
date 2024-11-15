@@ -2,6 +2,7 @@ type Account @entity {
     id: ID!
     designator: Designator
     events: [Event]! @derivedFrom(field: "account")
+    address: String!
 }
 
 type Designator @entity {

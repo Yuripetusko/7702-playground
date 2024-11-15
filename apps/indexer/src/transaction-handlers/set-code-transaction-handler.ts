@@ -1,4 +1,4 @@
-import { http, createPublicClient, isAddress } from 'viem';
+import { http, type Hex, createPublicClient, isAddress } from 'viem';
 import { odysseyTestnet } from 'viem/chains';
 import type { BatchState } from '../batch-state';
 import type { Transaction } from '../main';
@@ -10,6 +10,10 @@ import {
   SetCodeTxTypePayload,
 } from '../model';
 import type { FuncContext } from '../processor';
+import {
+  getAccountEntityId,
+  getDesignatorEntityId,
+} from '../utils/entity-id-helpers';
 import { getTransactionHandlerContext } from '../utils/get-transaction-handler-context';
 
 const publicClient = createPublicClient({
@@ -38,26 +42,28 @@ export const processSetCodeTransaction = async (
       blockNumber: BigInt(transaction.block.height),
     });
 
-    const accountId = transaction.to;
+    const accountId = getAccountEntityId(transaction.to);
     const account =
       await handlerContext.batchState.cachedState.accounts.getOrCreate(
         accountId,
-        async () => new Account({ id: accountId }),
+        async () => new Account({ id: accountId, address: transaction.to }),
       );
 
     let designator: Designator | undefined;
 
     // Prefix 0xef0100 indicates that the Account was upgraded to smart account and it's bytecode points to a contract code
     if (bytecode?.startsWith('0xef0100')) {
-      const designatorAddress = bytecode.replace('0xef0100', '0x');
+      const designatorAddress = bytecode.replace('0xef0100', '0x') as Hex;
+
+      const designatorId = getDesignatorEntityId(designatorAddress);
 
       // Contract that has smart account functionality
       designator =
         await handlerContext.batchState.cachedState.designators.getOrCreate(
-          designatorAddress,
+          designatorId,
           async () =>
             new Designator({
-              id: designatorAddress,
+              id: designatorId,
               address: designatorAddress,
             }),
         );
