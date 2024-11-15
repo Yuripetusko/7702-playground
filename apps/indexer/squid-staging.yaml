@@ -22,8 +22,3 @@ deploy:
     cmd:
       - sqd
       - migration:apply
-
-scale:
-  addons:
-    rpc:
-      max-rate: 20rps
