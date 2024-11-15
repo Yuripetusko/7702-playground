@@ -1,6 +1,5 @@
 manifestVersion: subsquid.io/v0.1
 name: indexer-7702-manager
-tag: staging
 description: 'An EIP-7702 indexer'
 build:
 deploy:
