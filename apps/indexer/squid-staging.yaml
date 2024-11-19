@@ -7,10 +7,11 @@ deploy:
     postgres:
   env:
     NETWORK: "ithaca-odyssey"
-    BLOCK_RANGE_FROM: 500000
+    BLOCK_RANGE_FROM: 683742
     RPC_URL: ${{ secrets.ODYSSEY_RPC_URL }}
+    #RPC_URL: "https://odyssey.ithaca.xyz"
     CHAIN_ID: 911867
-    RPC_RATE_LIMIT: 80
+    RPC_RATE_LIMIT: 40
   processor:
     cmd:
       - sqd

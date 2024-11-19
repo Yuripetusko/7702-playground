@@ -1,5 +1,4 @@
-import { http, type Hex, createPublicClient, isAddress } from 'viem';
-import { odysseyTestnet } from 'viem/chains';
+import { type Hex, isAddress } from 'viem';
 import type { BatchState } from '../batch-state';
 import type { Transaction } from '../main';
 import {
@@ -16,17 +15,16 @@ import {
 } from '../utils/entity-id-helpers';
 import { getTransactionHandlerContext } from '../utils/get-transaction-handler-context';
 
-const publicClient = createPublicClient({
-  chain: odysseyTestnet,
-  transport: http(),
-});
-
 export const processSetCodeTransaction = async (
   transaction: Transaction,
   ctx: FuncContext,
   batchState: BatchState,
 ) => {
-  if (transaction.to && isAddress(transaction.to)) {
+  if (
+    transaction.to &&
+    isAddress(transaction.to) &&
+    !!transaction.authorizationList
+  ) {
     const blockEntity = await batchState.cachedState.blocks.getOrThrow(
       transaction.block.id,
     );
@@ -36,11 +34,11 @@ export const processSetCodeTransaction = async (
       batchState,
       blockEntity,
     );
-    //TODO: When sqd sdk adds `authorizationList` to the transaction, then we probably can decode it to get the contract instead of making another call
-    const bytecode = await publicClient.getCode({
-      address: transaction.to,
-      blockNumber: BigInt(transaction.block.height),
-    });
+
+    //TODO: Handle multiple authorizationList items
+    const designatorAddress = transaction.authorizationList?.[0]?.address as
+      | Hex
+      | undefined;
 
     const accountId = getAccountEntityId(transaction.to);
     const account =
@@ -51,10 +49,8 @@ export const processSetCodeTransaction = async (
 
     let designator: Designator | undefined;
 
-    // Prefix 0xef0100 indicates that the Account was upgraded to smart account and it's bytecode points to a contract code
-    if (bytecode?.startsWith('0xef0100')) {
-      const designatorAddress = bytecode.replace('0xef0100', '0x') as Hex;
-
+    if (designatorAddress) {
+      console.log('designatorAddress', designatorAddress);
       const designatorId = getDesignatorEntityId(designatorAddress);
 
       // Contract that has smart account functionality
@@ -95,6 +91,8 @@ export const processSetCodeTransactions = async (
   batchState: BatchState,
 ) => {
   for (const transaction of transactions) {
-    await processSetCodeTransaction(transaction, ctx, batchState);
+    if (transaction.authorizationList) {
+      await processSetCodeTransaction(transaction, ctx, batchState);
+    }
   }
 };

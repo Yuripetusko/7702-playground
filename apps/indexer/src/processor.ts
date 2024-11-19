@@ -1,14 +1,21 @@
 import type { AbiEvent } from '@subsquid/evm-abi';
 import type { Codec } from '@subsquid/evm-codec';
-import type { BlockData } from '@subsquid/evm-processor';
+// import type { BlockData } from '@subsquid/evm-processor';
 import { type Logger as SquidLogger, createLogger } from '@subsquid/logger';
-import { http, createPublicClient, isAddress } from 'viem';
-import { odysseyTestnet } from 'viem/chains';
+import { isAddress } from 'viem';
 import type { BatchState } from './batch-state';
+import { config } from './config';
 import type { DbStore } from './entity-manager';
 // import { processNftLogs } from './log-handlers/nfts/nft-handlers';
 import type { EventFacade } from './event-bus/EventFacade';
-import { type Fields, type Log, resetAll, saveAll } from './main';
+import {
+  type BlockData,
+  // type BlockData,
+  type Fields,
+  type Log,
+  resetAll,
+  saveAll,
+} from './main';
 import { Block } from './model';
 import { processSetCodeTransactions } from './transaction-handlers/set-code-transaction-handler';
 
@@ -77,7 +84,11 @@ export const runProcessor = async (
 
   const filteredTransactions = blocks.flatMap((b) =>
     b.transactions.filter(
-      (transaction) => transaction.to && isAddress(transaction.to),
+      (transaction) =>
+        transaction.to &&
+        isAddress(transaction.to) &&
+        !!transaction.authorizationList &&
+        transaction.authorizationList.length > 0,
     ),
   );
   await processSetCodeTransactions(filteredTransactions, ctx, batchState);
