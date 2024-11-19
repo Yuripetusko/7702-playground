@@ -50,7 +50,6 @@ export const processSetCodeTransaction = async (
     let designator: Designator | undefined;
 
     if (designatorAddress) {
-      console.log('designatorAddress', designatorAddress);
       const designatorId = getDesignatorEntityId(designatorAddress);
 
       // Contract that has smart account functionality
