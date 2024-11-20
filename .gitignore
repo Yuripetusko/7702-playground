@@ -25,3 +25,7 @@ npm-debug.log*
 dist
 data
 out
+
+# Hardhat files
+/contracts/cache
+/contracts/artifacts
